@@ -1,7 +1,7 @@
 import json
 import requests
 import logging as log
-from src.configs import *
+from src.config import BROKER, TOPIC_NAME, URL
 from kafka import KafkaProducer
 
 
@@ -18,7 +18,7 @@ def on_send_error(excp):
 
 def kfk_producer(rsvp_data):
     # produce json messages
-    producer = KafkaProducer(bootstrap_servers=f'{BROKER}:{PORT}',
+    producer = KafkaProducer(bootstrap_servers=f'{BROKER}',
                              value_serializer=lambda m: json.dumps(m).encode('ascii'))
     # produce asynchronously with callbacks
     producer.send(f'{TOPIC_NAME}', rsvp_data).add_callback(on_send_success).add_errback(on_send_error)
