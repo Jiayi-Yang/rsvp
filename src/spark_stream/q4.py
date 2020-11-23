@@ -26,7 +26,7 @@ df = spark.readStream \
     .option("failOnDataLoss", "false") \
     .load()
 
-df1 = df.select(df['value'].cast("string"))
+df1 = df.select(col('timestamp'), df['value'].cast("string"))
 
 # get schema from a static file
 test = spark.read.json("/user/jiayiyang/rsvp/meetup_rsvp.json")
@@ -36,16 +36,13 @@ schema = test.schema
 df2 = df1.select(from_json(df1['value'], schema).alias("json"), 'timestamp')
 
 # select all columns from the converted column
-df3 = df2.select("json.*", 'timestamp')
-
-df5 = df3.select("timestamp", "group.group_country")
-df6 = df5.groupBy(window(col("timestamp"), "3 minutes", "60 seconds"), col("group_country"), ) \
+df3 = df2.select("timestamp", "json.group.group_country")
+df4 = df3.groupBy(window(col("timestamp"), "3 minutes", "60 seconds"), col("group_country"), ) \
     .count() \
-    .orderby('window')
+    .orderBy('window')
 
-df6.writeStream \
+df4.writeStream \
     .trigger(processingTime="60 seconds") \
-    .queryName("events_per_window4") \
     .format("console") \
     .outputMode("complete") \
     .option("truncate", "false") \

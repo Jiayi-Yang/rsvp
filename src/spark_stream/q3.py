@@ -33,11 +33,10 @@ df2 = df.select('timestamp')
 # create the tumbling window
 df3 = df2.groupBy(window(col("timestamp"), "2 minutes"))\
     .count()\
-    .orderby('window')
+    .orderBy('window')
 
 df3.writeStream\
     .trigger(processingTime="60 seconds")\
-    .queryName("events_per_window1")\
     .format("console")\
     .outputMode("complete")\
     .option("truncate", "false")\

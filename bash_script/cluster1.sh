@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copy to Cluster
+# Copy to Jumpbox
 scp src/stream/q2.py jiayiyang@54.86.193.122:~
 ssh jiayiyang@54.86.193.122
 
@@ -11,4 +11,4 @@ scp q2.py jiayiyang@ip-172-31-92-98.ec2.internal:~
 /opt/cloudera/parcels/CDH/bin/spark-submit \
 --master yarn \
 --deploy-mode client \
-q2.py
+q4.py
